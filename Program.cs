@@ -1,5 +1,7 @@
 ﻿using static System.Console;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace NEA_Dungeon_Game
 {
@@ -41,6 +43,10 @@ namespace NEA_Dungeon_Game
         private struct vec
         {
             public int x, y;
+            public static readonly vec one = new vec(1, 1);
+            private static readonly vec zeroVec = new vec(1, 1);
+            public static vec zero => zeroVec;
+
             public vec(int xPos, int yPos)
             {
                 x = xPos;
@@ -58,23 +64,30 @@ namespace NEA_Dungeon_Game
             {
                 return vec1.x != vec2.x || vec1.y != vec2.y;
             }
+            public static vec operator -(vec vec1, vec vec2)
+            {
+                return new vec(vec1.x - vec2.x, vec1.y - vec2.y);
+            }
         }
 
         private struct maze
         {
-            public vec size, playerPos, exitPos;
+            public vec mazeSize, playerPos, exitPos;
             public int[,] cells;
-            public maze(vec mazeSize, vec playerPos = new vec(0, 0))
+            public maze(vec mazeSize, vec playerPos = new vec(), vec exitPos = default)
             {
-                
+                this.mazeSize = mazeSize;
+                this.playerPos = playerPos;
+                if (exitPos == default) exitPos = mazeSize;
+                this.exitPos = exitPos;
+                cells = new int[mazeSize.x, mazeSize.y];
             }
 
             public int GetCell(vec pos)
             {
-                if (pos.y < size.y && pos.y > -1 && pos.x < size.x && pos.x > -1) return cells[pos.x, pos.y];
+                if (pos.y < mazeSize.y && pos.y > -1 && pos.x < mazeSize.x && pos.x > -1) return cells[pos.x, pos.y];
                 return -1;
             }
-            private 
         }
     }
 }
