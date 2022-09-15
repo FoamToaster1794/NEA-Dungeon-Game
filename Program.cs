@@ -1,12 +1,21 @@
 ﻿using static System.Console;
 using System;
 using System.Collections.Specialized;
-using System.ComponentModel;
+using System.Text;
 
 namespace NEA_Dungeon_Game
 {
     internal class Program
     {
+        private const string saveNamesFileName = "saveNames.txt";
+        private const string genSettingsFileName = "genSettings.txt";
+        private const string wall = "██";
+        private const string floor = "  ";
+        private const string player = "><";
+        private const string exitTile = "██";
+        private const int initialFontWeight = 400;
+        private const int initialFontSize = 36;
+        private const string initialFontName = "Lucida Sans Typewriter";
         public static void Main(string[] args)
         {
             
@@ -44,7 +53,7 @@ namespace NEA_Dungeon_Game
         {
             public int x, y;
             public static readonly vec one = new vec(1, 1);
-            private static readonly vec zeroVec = new vec(1, 1);
+            private static readonly vec zeroVec = new vec(0, 0);
             public static vec zero => zeroVec;
 
             public vec(int xPos, int yPos)
@@ -70,22 +79,45 @@ namespace NEA_Dungeon_Game
             }
         }
 
-        private struct maze
+        private void DisplayDungeon(Dungeon dungeon)
         {
-            public vec mazeSize, playerPos, exitPos;
-            public int[,] cells;
-            public maze(vec mazeSize, vec playerPos = new vec(), vec exitPos = default)
+            StringBuilder lines = new StringBuilder();
+            lines.Append('█', dungeon.size.x + 2);
+            lines.AppendLine();
+            for (int y = 0; y < dungeon.size.y; y++)
             {
-                this.mazeSize = mazeSize;
+                lines.Append(wall);
+                for (int x = 0; x < dungeon.size.x; x++)
+                {
+                    lines.Append()
+                }
+            }
+            
+        }
+
+        private class Dungeon
+        {
+            public readonly vec size;
+            public vec playerPos, exitPos;
+            public string[,] cells;
+            public Dungeon(vec size, vec playerPos = new vec(), vec exitPos = default)
+            {
+                this.size = size;
                 this.playerPos = playerPos;
-                if (exitPos == default) exitPos = mazeSize;
+                if (exitPos == default) exitPos = size;
                 this.exitPos = exitPos;
-                cells = new int[mazeSize.x, mazeSize.y];
+                cells = new string[size.x, size.y];
             }
 
             public int GetCell(vec pos)
             {
-                if (pos.y < mazeSize.y && pos.y > -1 && pos.x < mazeSize.x && pos.x > -1) return cells[pos.x, pos.y];
+                if (pos.y < size.y && pos.y > -1 && pos.x < size.x && pos.x > -1) return cells[pos.x, pos.y];
+                return -1;
+            }
+
+            public int GetCell(int x, int y)
+            {
+                if (y < size.y && y > -1 && x < size.x && x > -1) return cells[x, y];
                 return -1;
             }
         }
